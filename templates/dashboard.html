@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Shaggy Dog{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2 style="color: #333;">Your Generated Images</h2>
+    <a href="{{ url_for('generate') }}" class="btn btn-primary">Generate New Images</a>
+</div>
+
+{% if images %}
+    <div class="image-grid">
+        {% for img in images %}
+        <div class="image-card">
+            <h3>{{ img.dog_breed }}</h3>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                Original: {{ img.original_filename }}<br>
+                Created: {{ img.created_at.strftime('%Y-%m-%d %H:%M') }}
+            </p>
+            <div class="image-row">
+                {% if img.original_image_path %}
+                <div style="flex: 1;">
+                    <img src="{{ url_for('serve_upload', filename=img.original_image_path.replace('uploads/', '')) }}" 
+                         alt="Original" 
+                         style="width: 100%; border-radius: 8px;">
+                    <small style="display: block; text-align: center; margin-top: 5px; color: #666;">Original</small>
+                </div>
+                {% endif %}
+                <div style="flex: 1;">
+                    <img src="{{ url_for('serve_image', filename=img.image1_path.replace('static/generated_images/', '')) }}" 
+                         alt="Transition 1" 
+                         style="width: 100%; border-radius: 8px;">
+                    <small style="display: block; text-align: center; margin-top: 5px; color: #666;">Transition 1</small>
+                </div>
+                <div style="flex: 1;">
+                    <img src="{{ url_for('serve_image', filename=img.image2_path.replace('static/generated_images/', '')) }}" 
+                         alt="Transition 2" 
+                         style="width: 100%; border-radius: 8px;">
+                    <small style="display: block; text-align: center; margin-top: 5px; color: #666;">Transition 2</small>
+                </div>
+                <div style="flex: 1;">
+                    <img src="{{ url_for('serve_image', filename=img.image3_path.replace('static/generated_images/', '')) }}" 
+                         alt="Final Dog" 
+                         style="width: 100%; border-radius: 8px;">
+                    <small style="display: block; text-align: center; margin-top: 5px; color: #666;">Final Dog</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div style="text-align: center; padding: 60px 20px; color: #666;">
+        <h3 style="margin-bottom: 20px;">No images generated yet</h3>
+        <p style="margin-bottom: 30px;">Upload a human headshot to start transforming!</p>
+        <a href="{{ url_for('generate') }}" class="btn btn-primary">Generate Your First Image</a>
+    </div>
+{% endif %}
+{% endblock %}
+

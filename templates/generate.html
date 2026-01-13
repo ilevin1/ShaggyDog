@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Images - Shaggy Dog{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Generate Transformation Images</h2>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px; color: #333;">Instructions</h3>
+        <ul style="color: #666; line-height: 1.8;">
+            <li>Upload a clear human headshot photo</li>
+            <li>Supported formats: PNG, JPG, JPEG, GIF, WEBP</li>
+            <li>Maximum file size: 16MB</li>
+            <li>Processing may take a few minutes</li>
+        </ul>
+    </div>
+    
+    <form method="POST" action="{{ url_for('generate') }}" enctype="multipart/form-data" id="generateForm">
+        <div class="form-group">
+            <label for="file">Select Image</label>
+            <input type="file" id="file" name="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" required>
+        </div>
+        
+        <!-- Progress Bar (hidden by default) -->
+        <div id="progressContainer" style="display: none; margin-bottom: 20px;">
+            <div style="background: #e9ecef; border-radius: 10px; height: 30px; overflow: hidden; position: relative;">
+                <div id="progressBar" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; width: 0%; transition: width 0.3s ease; animation: progressAnimation 2s infinite;"></div>
+            </div>
+            <p id="progressText" style="text-align: center; margin-top: 10px; color: #667eea; font-weight: 600;">
+                Generating images... This may take a few minutes. Please wait.
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button type="submit" id="submitBtn" class="btn btn-primary">Generate Images</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" id="cancelBtn">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    @keyframes progressAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    
+    #progressBar {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+        background-size: 200% 100%;
+    }
+</style>
+
+<script>
+    document.getElementById('generateForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const fileInput = document.getElementById('file');
+        
+        // Validate file is selected
+        if (!fileInput.files || fileInput.files.length === 0) {
+            return; // Let browser handle validation
+        }
+        
+        // Show progress bar
+        progressContainer.style.display = 'block';
+        
+        // Disable submit button and change text
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.textContent = 'Generating...';
+        
+        // Disable cancel button (user should wait)
+        cancelBtn.style.pointerEvents = 'none';
+        cancelBtn.style.opacity = '0.5';
+        
+        // Note: We don't disable the file input because disabled inputs don't submit their values
+        
+        // Animate progress bar (indeterminate)
+        const progressBar = document.getElementById('progressBar');
+        let progress = 0;
+        const interval = setInterval(function() {
+            progress += Math.random() * 15;
+            if (progress > 90) {
+                progress = 90; // Don't go to 100% until page reloads
+            }
+            progressBar.style.width = progress + '%';
+        }, 500);
+        
+        // Store interval ID to clear if needed (though page will reload on success)
+        window.progressInterval = interval;
+    });
+</script>
+{% endblock %}
+
