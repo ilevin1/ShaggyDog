@@ -140,7 +140,7 @@ def generate_progressive_images(image_path, dog_breed, output_dir=None):
     
     # Image 3: Final transformation - full dog form
     print("Generating image 3/3: Final dog transformation...")
-    prompt3 = f"Transform this into a realistic {dog_breed} dog portrait that maintains the same pose, expression, and composition as the original person. The dog should have the same general facial structure and expression, but as a fully formed {dog_breed} dog."
+    prompt3 = f"Transform this into a realistic {dog_breed} dog portrait that maintains the same pose, expression, and composition as the original person. The dog should have the same general facial structure and expression, but as a fully formed {dog_breed} dog. However, the dog should still be wearing the same clothing as the human."
     
     try:
         response3 = client.responses.create(
